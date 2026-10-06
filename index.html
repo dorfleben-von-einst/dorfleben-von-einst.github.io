@@ -42,6 +42,7 @@
     <p>Jede Folge braucht viele Stunden Recherche in alten Büchern. Wenn dir die Videos gefallen, kannst du die Arbeit mit einem kleinen Betrag über PayPal unterstützen.</p>
     <a class="button" href="https://www.paypal.com/qrcodes/p2pqrc/6GF73ZY3W5MXQ">Mit PayPal unterstützen</a>
     <p class="hint">Der Knopf öffnet die PayPal-App auf deinem Handy. Den Betrag bestimmst du selbst.</p>
+    <p class="hint">Ohne App: in PayPal „Geld senden“ wählen und diese Adresse eingeben: <strong id="mail"></strong></p>
   </section>
 
   <section>
@@ -52,5 +53,9 @@
 
   <footer>Vielen Dank fürs Zuschauen!</footer>
 </main>
+<script>
+  // Adresse in zwei Teilen, damit Spam-Bots sie nicht aus dem HTML lesen
+  document.getElementById('mail').textContent = ['kov.yt.network', 'gmail.com'].join('@');
+</script>
 </body>
 </html>
