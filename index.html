@@ -40,9 +40,10 @@
   <section>
     <h2>Kanal unterstützen</h2>
     <p>Jede Folge braucht viele Stunden Recherche in alten Büchern. Wenn dir die Videos gefallen, kannst du die Arbeit mit einem kleinen Betrag über PayPal unterstützen.</p>
-    <a class="button" data-goatcounter-click="paypal-knopf" data-goatcounter-title="PayPal-Knopf" href="https://www.paypal.com/donate/?business=kov.yt.network%40gmail.com&amp;item_name=Dorfleben+von+einst&amp;no_recurring=1&amp;currency_code=EUR&amp;locale.x=de_DE">Mit PayPal unterstützen</a>
-    <p class="hint">Auch ohne PayPal-Konto, mit Karte. Der Knopf öffnet PayPal im Browser, den Betrag bestimmst du selbst.</p>
-    <p class="hint">Lieber in der PayPal-App? <a data-goatcounter-click="paypal-app" data-goatcounter-title="PayPal-App-Link" href="https://www.paypal.com/qrcodes/p2pqrc/6GF73ZY3W5MXQ">Hier in der App öffnen</a> oder „Geld senden“ wählen und diese Adresse eingeben: <strong id="mail"></strong></p>
+    <p>In PayPal „Geld senden“ wählen und diese Adresse eingeben:<br><strong id="mail"></strong></p>
+    <a class="button" id="copy" data-goatcounter-click="paypal-kopieren" data-goatcounter-title="PayPal-Adresse kopieren" href="#">Adresse kopieren</a>
+    <p class="hint">Den Betrag bestimmst du selbst.</p>
+    <p class="hint">Am Handy mit der PayPal-App: <a data-goatcounter-click="paypal-app" data-goatcounter-title="PayPal-App-Link" href="https://www.paypal.com/qrcodes/p2pqrc/6GF73ZY3W5MXQ">hier direkt in der App öffnen</a>.</p>
   </section>
 
   <section>
@@ -55,7 +56,16 @@
 </main>
 <script>
   // Adresse in zwei Teilen, damit Spam-Bots sie nicht aus dem HTML lesen
-  document.getElementById('mail').textContent = ['kov.yt.network', 'gmail.com'].join('@');
+  var mail = ['kov.yt.network', 'gmail.com'].join('@');
+  document.getElementById('mail').textContent = mail;
+  document.getElementById('copy').addEventListener('click', function (e) {
+    e.preventDefault();
+    var btn = this;
+    navigator.clipboard.writeText(mail).then(function () {
+      btn.textContent = 'Kopiert ✓';
+      setTimeout(function () { btn.textContent = 'Adresse kopieren'; }, 2000);
+    });
+  });
 </script>
 <script data-goatcounter="https://dorfleben.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
