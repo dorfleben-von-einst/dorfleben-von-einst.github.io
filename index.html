@@ -133,6 +133,16 @@
     document.getElementById('bank').hidden = false;
   }
 </script>
+<script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+<script>
+  // Schwebender Ko-fi-Knopf: Zahlung im Fenster, ohne die Seite zu verlassen
+  kofiWidgetOverlay.draw('dorflebenvoneinst', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Unterstützen',
+    'floating-chat.donateButton.background-color': '#B79560',
+    'floating-chat.donateButton.text-color': '#193C34'
+  });
+</script>
 <script data-goatcounter="https://dorfleben.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
