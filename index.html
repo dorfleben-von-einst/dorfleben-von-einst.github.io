@@ -44,6 +44,19 @@
   .data span:first-child { opacity: .75; }
   .data strong { margin-left: auto; text-align: right; }
   .addr { font-size: 16px; font-weight: bold; text-align: center; padding: 8px; margin: 0 0 12px; border: 1px dashed var(--line); border-radius: 6px; overflow-wrap: anywhere; }
+  /* Sammlung für die Verfilmung */
+  section.goal { border-color: var(--gold); background: var(--green-dark); }
+  .goal-sum { font-size: 15px; text-align: center; margin: 8px 0 14px; }
+  .goal-sum strong { font-size: 22px; color: var(--gold); }
+  .bar { position: relative; height: 18px; border: 1px solid var(--gold); border-radius: 9px; overflow: hidden; background: rgba(243, 232, 210, .08); }
+  .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--gold); transition: width .8s ease; }
+  .bar-tick { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--green); opacity: .9; }
+  .bar-tick.empty { background: var(--line); }
+  .folgen { display: flex; margin: 6px 0 14px; font-size: 13px; }
+  .folgen span { flex: 1; text-align: center; opacity: .6; }
+  .folgen span.done { opacity: 1; color: var(--gold); font-weight: bold; }
+  .folgen span.now { opacity: 1; }
+  .goal-msg { font-weight: bold; }
   footer { font-size: 15px; opacity: .8; margin-top: 28px; }
 </style>
 </head>
@@ -53,7 +66,24 @@
   <h1>Dorfleben von einst</h1>
   <p class="tagline">Geschichten vom Landleben · 1850–1914</p>
 
-  <section>
+  <!-- Sammlung: Betrag unten im Skript (SAMMLUNG) eintragen, der Rest rechnet sich selbst -->
+  <section class="goal" id="sammlung">
+    <h2>Unsere erste Verfilmung</h2>
+    <p>Eine Erzählung aus dem alten Ostpreußen als Film in vier Folgen, mit KI rekonstruiert. Jede Folge kostet 50&nbsp;€ in der Herstellung.</p>
+    <div class="goal-sum"><strong id="goal-have">0&nbsp;€</strong> von 200&nbsp;€</div>
+    <div class="bar" role="progressbar" aria-label="Gesammelt für die Verfilmung" aria-valuemin="0" aria-valuemax="200" id="goal-bar">
+      <div class="bar-fill" id="goal-fill"></div>
+      <div class="bar-tick" style="left:25%"></div>
+      <div class="bar-tick" style="left:50%"></div>
+      <div class="bar-tick" style="left:75%"></div>
+    </div>
+    <div class="folgen" id="goal-folgen"><span>Folge 1</span><span>Folge 2</span><span>Folge 3</span><span>Folge 4</span></div>
+    <p class="goal-msg" id="goal-msg"></p>
+    <a class="button" href="#unterstuetzen" data-goatcounter-click="sammlung-knopf" data-goatcounter-title="Sammlung: Jetzt unterstützen">Jetzt unterstützen</a>
+    <p class="hint fine" id="goal-stand"></p>
+  </section>
+
+  <section id="unterstuetzen">
     <h2>Kanal unterstützen</h2>
     <p>Jede Folge braucht viele Stunden Recherche in alten Büchern. Wenn dir die Videos gefallen, kannst du die Arbeit mit einem kleinen Betrag unterstützen. Den Betrag bestimmst du selbst.</p>
 
@@ -123,6 +153,48 @@
 <script>
   // Bankdaten für die Überweisung (Payoneer). Leer lassen = Karte bleibt versteckt.
   var UEBERWEISUNG = { name: '', iban: '', bic: '' };
+
+  // Sammlung für die Verfilmung: nur diese zwei Werte ändern.
+  // gesammelt = Euro bisher, stand = Datum der letzten Änderung (JJJJ-MM-TT)
+  var SAMMLUNG = { gesammelt: 7, stand: '2026-11-04' };
+
+  (function () {
+    var PRO_FOLGE = 50, FOLGEN = 4, ZIEL = PRO_FOLGE * FOLGEN;
+    var have = Math.max(0, Math.round(SAMMLUNG.gesammelt));
+    var done = Math.min(FOLGEN, Math.floor(have / PRO_FOLGE));
+    var euro = function (n) { return n + ' €'; };
+
+    document.getElementById('goal-have').textContent = euro(have);
+    document.getElementById('goal-bar').setAttribute('aria-valuenow', Math.min(have, ZIEL));
+    setTimeout(function () {
+      document.getElementById('goal-fill').style.width = Math.min(100, have / ZIEL * 100) + '%';
+    }, 100);
+
+    var labels = document.getElementById('goal-folgen').children;
+    for (var i = 0; i < FOLGEN; i++) {
+      if (i < done) { labels[i].className = 'done'; labels[i].textContent = 'Folge ' + (i + 1) + ' ✓'; }
+      else if (i === done) { labels[i].className = 'now'; }
+    }
+    // Striche hinter dem Füllstand hell zeichnen
+    var ticks = document.querySelectorAll('.bar-tick');
+    for (var t = 0; t < ticks.length; t++) {
+      if (have < (t + 1) * PRO_FOLGE) ticks[t].className = 'bar-tick empty';
+    }
+
+    var rest = (done + 1) * PRO_FOLGE - have, msg;
+    if (done >= FOLGEN) {
+      msg = 'Geschafft! Alle vier Folgen sind finanziert. Vielen Dank! Alles darüber fließt in die nächste Verfilmung.';
+    } else if (done === 0) {
+      msg = 'Wir sammeln für Folge 1. Noch ' + euro(rest) + ' bis zum Produktionsstart.';
+    } else {
+      msg = (done === 1 ? 'Folge 1 ist' : 'Folge 1 bis ' + done + ' sind') + ' in Produktion ✓ Jetzt sammeln wir für Folge ' + (done + 1) + ', noch ' + euro(rest) + '.';
+    }
+    document.getElementById('goal-msg').textContent = msg;
+
+    var d = SAMMLUNG.stand.split('-');
+    var monate = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+    document.getElementById('goal-stand').textContent = 'Stand: ' + parseInt(d[2], 10) + '. ' + monate[parseInt(d[1], 10) - 1] + ' ' + d[0] + ' · Der Betrag wird von Hand nachgetragen.';
+  })();
 
   function copyButton(id, text, label) {
     document.getElementById(id).addEventListener('click', function () {
